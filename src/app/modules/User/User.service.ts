@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import mongoose from 'mongoose';
-import { TUser } from './User.interface';
+import { TGender, TUser } from './User.interface';
 import { User } from './User.model';
 import AppError from '../../errors/appError';
 import httpStatus from 'http-status';
 import { Doctor } from '../Doctor/Doctor.model';
+import { userRole } from './User.constant';
+import { Patient } from '../Patient/Patient.model';
 
 const createDoctor = async (
   file: any,
@@ -20,7 +22,7 @@ const createDoctor = async (
     email: payload.email,
     password: payload.password,
     phone: payload.phone,
-    role: 'Doctor',
+    role: userRole.Doctor,
   };
 
   const session = await mongoose.startSession();
@@ -69,6 +71,61 @@ const createDoctor = async (
   }
 };
 
+const createPatient = async (
+  payload: TUser & {
+    age: number;
+    gender: TGender;
+  },
+) => {
+  const userData = {
+    name: payload.name,
+    email: payload.email,
+    password: payload.password,
+    phone: payload.phone,
+    role: userRole.Patient,
+  };
+
+  const session = await mongoose.startSession();
+
+  try {
+    session.startTransaction();
+
+    // create an user (transaction-1)
+    const newUser = await User.create([userData], { session });
+
+    if (!newUser.length) {
+      throw new AppError(httpStatus.BAD_REQUEST, 'Faild to create an user!');
+    }
+
+    const patientData = {
+      user: newUser[0]._id,
+      age: payload.age,
+      gender: payload.gender,
+    };
+
+    // create a Patient (transaction-2)
+    const newPatient = await Patient.create([patientData], { session });
+
+    if (!newPatient.length) {
+      throw new AppError(httpStatus.BAD_REQUEST, 'Faild to create a patient!');
+    }
+
+    // populate user data
+    const patient = Patient.findById(newPatient[0]._id).populate('user');
+
+    // permanently save to database, because user and doctor created successfully
+    await session.commitTransaction();
+    await session.endSession();
+
+    return patient;
+  } catch (error: any) {
+    await session.abortTransaction();
+    await session.endSession();
+    throw new Error(error);
+  }
+};
+
 export const userServices = {
   createDoctor,
+  createPatient,
 };

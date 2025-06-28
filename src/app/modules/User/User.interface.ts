@@ -1,6 +1,7 @@
 import { Model } from 'mongoose';
 
 export type TUserRole = 'Doctor' | 'Patient' | 'Admin';
+export type TGender = 'Male' | 'Female' | 'Other';
 
 export interface TUser {
   _id?: string;

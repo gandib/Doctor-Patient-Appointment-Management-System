@@ -10,12 +10,17 @@ router.post(
   '/register-doctor',
   multerUpload.single('file'),
   (req: Request, res: Response, next: NextFunction) => {
-    console.log('object');
     req.body = JSON.parse(req.body.data);
     next();
   },
   validateRequest(userValidations.createDoctorValidation),
   userControllers.createDoctor,
+);
+
+router.post(
+  '/register-patient',
+  validateRequest(userValidations.createPatientValidation),
+  userControllers.createPatient,
 );
 
 export const userRoutes = router;
