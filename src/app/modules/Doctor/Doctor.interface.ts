@@ -10,6 +10,7 @@ export type TDoctor = {
 };
 
 export type TService = {
+  doctor: Types.ObjectId;
   title: string;
   description: string;
   price: number;

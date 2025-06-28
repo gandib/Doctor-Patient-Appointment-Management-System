@@ -2,7 +2,7 @@ import { TUserRole } from './User.interface';
 
 export const role: TUserRole[] = ['Doctor', 'Patient', 'Admin'];
 export const userRole = {
-  Doctor: 'Dpctor ',
+  Doctor: 'Doctor',
   Patient: 'Patient',
   Admin: 'Admin',
 };

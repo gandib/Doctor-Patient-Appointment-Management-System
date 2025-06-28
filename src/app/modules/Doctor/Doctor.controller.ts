@@ -4,7 +4,8 @@ import sendResponse from '../../utils/sendResponse';
 import { doctorServices } from './Doctor.service';
 
 const createService = catchAsync(async (req, res) => {
-  const result = await doctorServices.createService(req.body);
+  const user = req.user;
+  const result = await doctorServices.createService(req.body, user._id);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -16,7 +17,8 @@ const createService = catchAsync(async (req, res) => {
 
 const updateService = catchAsync(async (req, res) => {
   const { id } = req.params;
-  const result = await doctorServices.updateService(req.body, id);
+  const user = req.user;
+  const result = await doctorServices.updateService(req.body, id, user._id);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -28,7 +30,8 @@ const updateService = catchAsync(async (req, res) => {
 
 const deleteService = catchAsync(async (req, res) => {
   const { id } = req.params;
-  const result = await doctorServices.deleteService(id);
+  const user = req.user;
+  const result = await doctorServices.deleteService(id, user._id);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,

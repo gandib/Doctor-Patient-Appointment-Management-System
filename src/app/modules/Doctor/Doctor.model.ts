@@ -28,6 +28,11 @@ const doctorSchema = new Schema<TDoctor>(
 
 // For services
 const serviceSchema = new Schema<TService>({
+  doctor: {
+    type: Schema.Types.ObjectId,
+    required: [true, 'Doctor Id is required'],
+    ref: 'Doctor',
+  },
   title: { type: String, required: [true, 'Title is required!'] },
   description: { type: String, required: [true, 'Description is required!'] },
   price: { type: Number, required: [true, 'Price is required!'] },

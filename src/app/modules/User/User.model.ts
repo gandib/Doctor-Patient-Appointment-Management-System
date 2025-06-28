@@ -22,7 +22,6 @@ const userSchema = new Schema<TUser, UserModel>(
     phone: {
       type: String,
       required: [true, 'Phone number is required!'],
-      unique: true,
     },
     role: {
       type: String,
