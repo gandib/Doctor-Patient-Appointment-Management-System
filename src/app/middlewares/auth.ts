@@ -3,8 +3,8 @@ import httpStatus from 'http-status';
 import AppError from '../errors/appError';
 import catchAsync from '../utils/catchAsync';
 import config from '../config';
-import { TUserRole } from '../modules/User/user.interface';
-import { User } from '../modules/User/user.model';
+import { TUserRole } from '../modules/User/User.interface';
+import { User } from '../modules/User/User.model';
 import AuthError from '../errors/authError';
 
 const auth = (...requiredRole: TUserRole[]) => {

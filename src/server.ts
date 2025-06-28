@@ -1,8 +1,10 @@
 import { Server } from 'http';
 import app from './app';
 import config from './app/config';
+import mongoose from 'mongoose';
 
 async function main() {
+  await mongoose.connect(config.database_url as string);
   const server: Server = app.listen(config.port, () => {
     console.log('Server is running on port ', config.port);
   });
