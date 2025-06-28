@@ -13,4 +13,11 @@ router.post(
   doctorControllers.createService,
 );
 
+router.patch(
+  '/services/:id',
+  auth('Doctor'),
+  validateRequest(doctorValidations.updateServiceValidation),
+  doctorControllers.updateService,
+);
+
 export const doctorRoutes = router;

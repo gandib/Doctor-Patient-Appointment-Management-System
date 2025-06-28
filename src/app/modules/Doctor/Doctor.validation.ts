@@ -9,6 +9,16 @@ const createServiceValidation = z.object({
   }),
 });
 
+const updateServiceValidation = z.object({
+  body: z.object({
+    title: z.string().optional(),
+    description: z.string().optional(),
+    price: z.number().optional(),
+    duration: z.number().optional(),
+  }),
+});
+
 export const doctorValidations = {
   createServiceValidation,
+  updateServiceValidation,
 };

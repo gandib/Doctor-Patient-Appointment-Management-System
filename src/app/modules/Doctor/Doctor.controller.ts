@@ -14,6 +14,19 @@ const createService = catchAsync(async (req, res) => {
   });
 });
 
+const updateService = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const result = await doctorServices.updateService(req.body, id);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Service updated successfully',
+    data: result,
+  });
+});
+
 export const doctorControllers = {
   createService,
+  updateService,
 };
