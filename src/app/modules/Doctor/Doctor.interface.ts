@@ -8,3 +8,10 @@ export type TDoctor = {
   hospitalFloor: string;
   profileImage: string;
 };
+
+export type TService = {
+  title: string;
+  description: string;
+  price: number;
+  duration: number;
+};
