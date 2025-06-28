@@ -23,4 +23,10 @@ router.post(
   userControllers.createPatient,
 );
 
+router.post(
+  '/login',
+  validateRequest(userValidations.loginValidation),
+  userControllers.loginUser,
+);
+
 export const userRoutes = router;

@@ -1,12 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import mongoose from 'mongoose';
-import { TGender, TUser } from './User.interface';
+import { TGender, TLoginUser, TUser } from './User.interface';
 import { User } from './User.model';
 import AppError from '../../errors/appError';
 import httpStatus from 'http-status';
 import { Doctor } from '../Doctor/Doctor.model';
 import { userRole } from './User.constant';
 import { Patient } from '../Patient/Patient.model';
+import jwt, { Secret, SignOptions } from 'jsonwebtoken';
+import config from '../../config';
 
 const createDoctor = async (
   file: any,
@@ -125,7 +127,31 @@ const createPatient = async (
   }
 };
 
+const loginUser = async (payload: TLoginUser) => {
+  const user = await User.isUserExistsByEmail(payload?.email);
+
+  // checking if password is correct
+  if (!(await User.isPasswordMatched(payload?.password, user?.password))) {
+    throw new AppError(httpStatus.FORBIDDEN, 'Credential is not matched!');
+  }
+
+  const jwtPayload = {
+    _id: user?._id,
+    name: user?.name,
+    email: user?.email,
+    role: user?.role,
+  };
+
+  // expiresIn: SignOptions['expiresIn'],
+  const token = jwt.sign(jwtPayload, config.jwt_access_secret as Secret, {
+    expiresIn: config.jwt_access_expire_in as SignOptions['expiresIn'],
+  });
+
+  return token;
+};
+
 export const userServices = {
   createDoctor,
   createPatient,
+  loginUser,
 };

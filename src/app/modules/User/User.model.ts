@@ -1,8 +1,10 @@
+import httpStatus from 'http-status';
 import { Schema, model } from 'mongoose';
 import { TUser, UserModel } from './User.interface';
 import { role } from './User.constant';
 import bcrypt from 'bcrypt';
 import config from '../../config';
+import AppError from '../../errors/appError';
 
 const userSchema = new Schema<TUser, UserModel>(
   {
@@ -34,7 +36,13 @@ const userSchema = new Schema<TUser, UserModel>(
 );
 
 userSchema.statics.isUserExistsByEmail = async function (email: string) {
-  return await User.findOne({ email }).select('+password');
+  const user = await User.findOne({ email }).select('+password');
+
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, 'User not found');
+  }
+
+  return user;
 };
 
 userSchema.pre('save', async function (next) {

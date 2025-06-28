@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { ErrorRequestHandler } from 'express';
+import { ErrorRequestHandler, Request, Response, NextFunction } from 'express';
 import { ZodError } from 'zod';
 import { TErrorMessages } from '../interface/error';
 import config from '../config';
@@ -11,8 +11,12 @@ import handleDuplicateError from '../errors/handleDuplicateError';
 import AppError from '../errors/appError';
 import AuthError from '../errors/authError';
 
-const globalErrorHandler: ErrorRequestHandler = (error, req, res, next) => {
-  // SETTING DEFAULT VALUES
+const globalErrorHandler: ErrorRequestHandler = (
+  error,
+  req,
+  res,
+  next,
+): void => {
   let statusCode = 500;
   let message = 'Something went wrong!';
   let errorMessages: TErrorMessages = [
@@ -43,18 +47,11 @@ const globalErrorHandler: ErrorRequestHandler = (error, req, res, next) => {
     message = simplifiedError.message;
     errorMessages = simplifiedError.errorMessages;
   } else if (error instanceof AppError) {
-    return res.status(statusCode).json({
-      success: false,
-      statusCode: error?.statusCode,
-      message: error?.message,
-      data: [],
-    });
+    statusCode = error?.statusCode;
+    message = error?.message;
   } else if (error instanceof AuthError) {
-    return res.status(statusCode).json({
-      success: false,
-      statusCode: error?.statusCode,
-      message: error?.message,
-    });
+    statusCode = error?.statusCode;
+    message = error?.message;
   } else if (error instanceof Error) {
     message = error?.message;
     errorMessages = [
@@ -65,7 +62,7 @@ const globalErrorHandler: ErrorRequestHandler = (error, req, res, next) => {
     ];
   }
 
-  return res.status(statusCode).json({
+  res.status(statusCode).json({
     success: false,
     message,
     errorMessages,

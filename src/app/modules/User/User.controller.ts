@@ -25,7 +25,18 @@ const createPatient = catchAsync(async (req, res) => {
   });
 });
 
+const loginUser = catchAsync(async (req, res) => {
+  const result = await userServices.loginUser(req.body);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'User logged in successfully',
+    data: result,
+  });
+});
+
 export const userControllers = {
   createDoctor,
   createPatient,
+  loginUser,
 };
