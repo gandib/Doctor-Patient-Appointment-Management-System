@@ -21,7 +21,13 @@ const updateService = async (payload: Partial<TService>, id: string) => {
   return result;
 };
 
+const deleteService = async (id: string) => {
+  const result = await Service.findByIdAndDelete(id, { new: true });
+  return result;
+};
+
 export const doctorServices = {
   createService,
   updateService,
+  deleteService,
 };
