@@ -77,8 +77,8 @@ const doctorAvailabilitySchema = new Schema<TDoctorAvailability>(
     },
     serviceId: {
       type: Schema.Types.ObjectId,
-      required: [true, 'Doctor Id is required'],
-      ref: 'Doctor',
+      required: [true, 'Service Id is required'],
+      ref: 'Service',
     },
     weeklyAvailability: {
       type: [WeeklyAvailabilitySchema],

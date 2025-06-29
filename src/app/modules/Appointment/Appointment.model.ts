@@ -11,12 +11,12 @@ const appointmentSchema = new Schema<TAppointment>(
     serviceId: {
       type: Schema.Types.ObjectId,
       required: [true, 'Service Id is required'],
-      ref: 'Doctor',
+      ref: 'Service',
     },
     patientId: {
       type: Schema.Types.ObjectId,
       required: [true, 'Patient Id is required'],
-      ref: 'Doctor',
+      ref: 'Patient',
     },
     selectedDate: { type: Date, required: [true, 'Date is required!'] },
     timeSlot: { type: String, required: [true, 'Time slot is required!'] },
