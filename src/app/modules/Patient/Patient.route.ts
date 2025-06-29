@@ -11,9 +11,15 @@ router.get(
 );
 
 router.get(
-  '/',
+  '/doctors',
   auth('Patient', 'Doctor', 'Admin'),
   patientControllers.getAllDoctors,
+);
+
+router.get(
+  '/doctors/:id',
+  auth('Patient', 'Doctor', 'Admin'),
+  patientControllers.getSingleDoctor,
 );
 
 export const patientRoutes = router;

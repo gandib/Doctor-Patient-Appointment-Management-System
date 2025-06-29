@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import mongoose from 'mongoose';
 import QueryBuilder from '../../builder/QueryBuilder';
 import { appointmentSearchableFields } from '../Appointment/Appointment.constant';
 import { Appointment } from '../Appointment/Appointment.model';
@@ -69,6 +70,11 @@ const getAllDoctors = async (query: Record<string, unknown>) => {
     },
     { $unwind: '$user' },
     {
+      $project: {
+        'user.password': 0, // exclude password
+      },
+    },
+    {
       $lookup: {
         from: 'services',
         localField: '_id',
@@ -121,7 +127,74 @@ const getAllDoctors = async (query: Record<string, unknown>) => {
   };
 };
 
+const getSingleDoctor = async (doctorId: string) => {
+  const doctorData = await Doctor.aggregate([
+    {
+      $match: { _id: new mongoose.Types.ObjectId(doctorId) },
+    },
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'user',
+        foreignField: '_id',
+        as: 'user',
+      },
+    },
+    { $unwind: '$user' },
+    {
+      $project: {
+        'user.password': 0,
+      },
+    },
+    {
+      $lookup: {
+        from: 'services',
+        localField: '_id',
+        foreignField: 'doctor',
+        as: 'services',
+      },
+    },
+    {
+      $lookup: {
+        from: 'doctoravailabilities',
+        localField: '_id',
+        foreignField: 'doctorId',
+        as: 'availability',
+      },
+    },
+  ]);
+
+  const doctor = doctorData[0];
+  if (!doctor) return null;
+
+  const availability = doctor.availability?.[0]?.weeklyAvailability || [];
+
+  // Fetch all booked timeSlots for this doctor
+  const appointments = await Appointment.find({
+    doctorId: doctor._id,
+    status: { $in: ['pending', 'approved'] },
+  }).select('timeSlot date');
+
+  const bookedSlots = appointments.map((a) => a.timeSlot);
+
+  // Remove booked slots from availability
+  const updatedAvailability = availability.map((entry: any) => {
+    const remainingSlots = entry.timeSlots.filter(
+      (slot: string) => !bookedSlots.includes(slot),
+    );
+    return {
+      day: entry.day,
+      timeSlots: remainingSlots,
+    };
+  });
+
+  doctor.remainingAvailability = updatedAvailability;
+
+  return doctor;
+};
+
 export const patientServices = {
   getAllAppointments,
   getAllDoctors,
+  getSingleDoctor,
 };

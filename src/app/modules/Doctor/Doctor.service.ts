@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import httpStatus from 'http-status';
 import AppError from '../../errors/appError';
 import { TDoctorAvailability, TService } from './Doctor.interface';
