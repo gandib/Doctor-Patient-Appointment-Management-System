@@ -4,6 +4,9 @@ import { TDoctorAvailability, TService } from './Doctor.interface';
 import { Doctor, DoctorAvailability, Service } from './Doctor.model';
 import { Types } from 'mongoose';
 import { generateTimeSlots } from '../../utils/generateTimeSlot';
+import QueryBuilder from '../../builder/QueryBuilder';
+import { Appointment } from '../Appointment/Appointment.model';
+import { appointmentSearchableFields } from '../Appointment/Appointment.constant';
 
 const createService = async (payload: TService, userId: string) => {
   const doctor = await Doctor.findOne({ user: userId });
@@ -92,9 +95,41 @@ const createDoctorAvailability = async (
   return result;
 };
 
+const getAllAppointments = async (query: Record<string, unknown>) => {
+  const studentQuery = new QueryBuilder(
+    Appointment.find().populate([
+      {
+        path: 'doctorId',
+        populate: { path: 'user' },
+      },
+      {
+        path: 'serviceId',
+      },
+      {
+        path: 'patientId',
+      },
+    ]),
+    query,
+  )
+    .search(appointmentSearchableFields)
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
+
+  const result = await studentQuery.modelQuery;
+  const meta = await studentQuery.countTotal();
+
+  return {
+    meta,
+    result,
+  };
+};
+
 export const doctorServices = {
   createService,
   updateService,
   deleteService,
   createDoctorAvailability,
+  getAllAppointments,
 };

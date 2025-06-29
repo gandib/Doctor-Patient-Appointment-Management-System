@@ -29,4 +29,10 @@ router.post(
 
 router.delete('/services/:id', auth('Doctor'), doctorControllers.deleteService);
 
+router.get(
+  '/appointments',
+  auth('Doctor'),
+  doctorControllers.getAllAppointments,
+);
+
 export const doctorRoutes = router;
