@@ -10,4 +10,10 @@ router.get(
   patientControllers.getAllAppointments,
 );
 
+router.get(
+  '/',
+  auth('Patient', 'Doctor', 'Admin'),
+  patientControllers.getAllDoctors,
+);
+
 export const patientRoutes = router;

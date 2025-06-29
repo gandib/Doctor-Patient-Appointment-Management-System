@@ -56,23 +56,9 @@ const createDoctorAvailability = catchAsync(async (req, res) => {
   });
 });
 
-const getAllDoctors = catchAsync(async (req, res) => {
-  const result = await doctorServices.getAllDoctors(req.query);
-
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: 'Doctors are retrieved successfully!',
-    meta: result.meta,
-    data: result.result,
-    // data: result,
-  });
-});
-
 export const doctorControllers = {
   createService,
   updateService,
   deleteService,
   createDoctorAvailability,
-  getAllDoctors,
 };

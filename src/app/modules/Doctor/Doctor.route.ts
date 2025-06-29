@@ -29,10 +29,4 @@ router.post(
 
 router.delete('/services/:id', auth('Doctor'), doctorControllers.deleteService);
 
-router.get(
-  '/',
-  auth('Patient', 'Doctor', 'Admin'),
-  doctorControllers.getAllDoctors,
-);
-
 export const doctorRoutes = router;
