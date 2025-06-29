@@ -20,6 +20,13 @@ router.patch(
   doctorControllers.updateService,
 );
 
+router.post(
+  '/availability',
+  auth('Doctor'),
+  validateRequest(doctorValidations.createDoctorAvailabilityValidation),
+  doctorControllers.createDoctorAvailability,
+);
+
 router.delete('/services/:id', auth('Doctor'), doctorControllers.deleteService);
 
 export const doctorRoutes = router;

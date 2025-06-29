@@ -18,7 +18,33 @@ const updateServiceValidation = z.object({
   }),
 });
 
+const createDoctorAvailabilityValidation = z.object({
+  body: z.object({
+    serviceId: z.string({ required_error: 'Service Id is required!' }),
+    weeklyAvailability: z.array(
+      z.object({
+        day: z.enum(
+          [
+            'Monday',
+            'Tuesday',
+            'Wednesday',
+            'Thursday',
+            'Friday',
+            'Saturday',
+            'Sunday',
+          ],
+          { required_error: 'Day is required!' },
+        ),
+        timeSlots: z.array(
+          z.string({ required_error: 'Time slot is required!' }),
+        ),
+      }),
+    ),
+  }),
+});
+
 export const doctorValidations = {
   createServiceValidation,
   updateServiceValidation,
+  createDoctorAvailabilityValidation,
 };

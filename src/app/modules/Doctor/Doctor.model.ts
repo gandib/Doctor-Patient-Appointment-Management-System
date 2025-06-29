@@ -1,5 +1,10 @@
 import { model, Schema } from 'mongoose';
-import { TDoctor, TService } from './Doctor.interface';
+import {
+  TDoctor,
+  TDoctorAvailability,
+  TService,
+  TWeeklyAvailability,
+} from './Doctor.interface';
 
 const doctorSchema = new Schema<TDoctor>(
   {
@@ -27,18 +32,67 @@ const doctorSchema = new Schema<TDoctor>(
 );
 
 // For services
-const serviceSchema = new Schema<TService>({
-  doctor: {
-    type: Schema.Types.ObjectId,
-    required: [true, 'Doctor Id is required'],
-    ref: 'Doctor',
+const serviceSchema = new Schema<TService>(
+  {
+    doctor: {
+      type: Schema.Types.ObjectId,
+      required: [true, 'Doctor Id is required'],
+      ref: 'Doctor',
+    },
+    title: { type: String, required: [true, 'Title is required!'] },
+    description: { type: String, required: [true, 'Description is required!'] },
+    price: { type: Number, required: [true, 'Price is required!'] },
+    duration: { type: Number, required: [true, 'Duration is required!'] },
   },
-  title: { type: String, required: [true, 'Title is required!'] },
-  description: { type: String, required: [true, 'Description is required!'] },
-  price: { type: Number, required: [true, 'Price is required!'] },
-  duration: { type: Number, required: [true, 'Duration is required!'] },
+  { timestamps: true },
+);
+
+// For Doctor weekly availability
+const WeeklyAvailabilitySchema = new Schema<TWeeklyAvailability>({
+  day: {
+    type: String,
+    required: true,
+    enum: [
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Sunday',
+    ],
+  },
+  timeSlots: {
+    type: [String],
+    required: true,
+  },
 });
+
+const doctorAvailabilitySchema = new Schema<TDoctorAvailability>(
+  {
+    doctorId: {
+      type: Schema.Types.ObjectId,
+      required: [true, 'Doctor Id is required'],
+      ref: 'Doctor',
+    },
+    serviceId: {
+      type: Schema.Types.ObjectId,
+      required: [true, 'Doctor Id is required'],
+      ref: 'Doctor',
+    },
+    weeklyAvailability: {
+      type: [WeeklyAvailabilitySchema],
+      default: [],
+    },
+  },
+  { timestamps: true },
+);
 
 export const Doctor = model<TDoctor>('Doctor', doctorSchema);
 
 export const Service = model<TService>('Service', serviceSchema);
+
+export const DoctorAvailability = model<TDoctorAvailability>(
+  'DoctorAvailability',
+  doctorAvailabilitySchema,
+);

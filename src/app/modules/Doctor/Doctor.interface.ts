@@ -16,3 +16,14 @@ export type TService = {
   price: number;
   duration: number;
 };
+
+export type TWeeklyAvailability = {
+  day: string;
+  timeSlots: string[];
+};
+
+export type TDoctorAvailability = {
+  doctorId: Types.ObjectId;
+  serviceId: Types.ObjectId;
+  weeklyAvailability: TWeeklyAvailability[];
+};

@@ -41,8 +41,24 @@ const deleteService = catchAsync(async (req, res) => {
   });
 });
 
+const createDoctorAvailability = catchAsync(async (req, res) => {
+  const user = req.user;
+  const result = await doctorServices.createDoctorAvailability(
+    req.body,
+    user._id,
+  );
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Doctor availability created successfully',
+    data: result,
+  });
+});
+
 export const doctorControllers = {
   createService,
   updateService,
   deleteService,
+  createDoctorAvailability,
 };

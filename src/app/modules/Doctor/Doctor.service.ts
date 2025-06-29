@@ -1,7 +1,7 @@
 import httpStatus from 'http-status';
 import AppError from '../../errors/appError';
-import { TService } from './Doctor.interface';
-import { Doctor, Service } from './Doctor.model';
+import { TDoctorAvailability, TService } from './Doctor.interface';
+import { Doctor, DoctorAvailability, Service } from './Doctor.model';
 import { Types } from 'mongoose';
 
 const createService = async (payload: TService, userId: string) => {
@@ -56,8 +56,30 @@ const deleteService = async (id: string, userId: string) => {
   return result;
 };
 
+const createDoctorAvailability = async (
+  payload: TDoctorAvailability,
+  userId: string,
+) => {
+  const doctor = await Doctor.findOne({ user: userId }).select('_id');
+  const service = await Service.findById(payload.serviceId);
+
+  if (!doctor?._id) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Doctor is not found!');
+  }
+
+  payload.doctorId = doctor?._id as unknown as Types.ObjectId;
+
+  if (!service?._id) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Service is not found!');
+  }
+
+  const result = await DoctorAvailability.create(payload);
+  return result;
+};
+
 export const doctorServices = {
   createService,
   updateService,
   deleteService,
+  createDoctorAvailability,
 };
