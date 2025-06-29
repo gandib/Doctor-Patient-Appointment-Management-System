@@ -3,6 +3,7 @@ import AppError from '../../errors/appError';
 import { TDoctorAvailability, TService } from './Doctor.interface';
 import { Doctor, DoctorAvailability, Service } from './Doctor.model';
 import { Types } from 'mongoose';
+import { generateTimeSlots } from '../../utils/generateTimeSlot';
 
 const createService = async (payload: TService, userId: string) => {
   const doctor = await Doctor.findOne({ user: userId });
@@ -71,6 +72,18 @@ const createDoctorAvailability = async (
 
   if (!service?._id) {
     throw new AppError(httpStatus.NOT_FOUND, 'Service is not found!');
+  }
+
+  for (let i = 0; i < payload.weeklyAvailability.length; i++) {
+    const timeRanges = payload.weeklyAvailability[i].timeSlots;
+
+    // Flatten all generated slots for each time range
+    const slots = timeRanges.flatMap((range: string) =>
+      generateTimeSlots(range, 30),
+    );
+
+    // Replace the timeSlots with the generated slots
+    payload.weeklyAvailability[i].timeSlots = slots;
   }
 
   const result = await DoctorAvailability.create(payload);
