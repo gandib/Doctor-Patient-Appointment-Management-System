@@ -6,5 +6,5 @@ export type TAppointment = {
   patientId: Types.ObjectId;
   selectedDate: Date;
   timeSlot: string;
-  status: 'pending' | 'accepted' | 'cancelled';
+  status: 'pending' | 'accepted' | 'cancelled' | 'completed';
 };

@@ -7,6 +7,7 @@ import { generateTimeSlots } from '../../utils/generateTimeSlot';
 import QueryBuilder from '../../builder/QueryBuilder';
 import { Appointment } from '../Appointment/Appointment.model';
 import { appointmentSearchableFields } from '../Appointment/Appointment.constant';
+import { TAppointment } from '../Appointment/Appointment.interface';
 
 const createService = async (payload: TService, userId: string) => {
   const doctor = await Doctor.findOne({ user: userId });
@@ -126,10 +127,39 @@ const getAllAppointments = async (query: Record<string, unknown>) => {
   };
 };
 
+const updateAppointment = async (
+  payload: Partial<TAppointment>,
+  appointmentId: string,
+  userId: string,
+) => {
+  // Find DoctorId
+  const doctorId = await Doctor.findOne({ user: userId }).select('_id');
+
+  // Find doctorId from appointment
+  const doctorIdFromAppointment =
+    await Appointment.findById(appointmentId).select('doctorId');
+
+  // Compare doctorId from token to doctorIdFromAppointment. To check appointment is related to that doctor or not.
+  if (String(doctorId?._id) !== String(doctorIdFromAppointment?.doctorId)) {
+    throw new AppError(httpStatus.UNAUTHORIZED, 'You are not authorized!');
+  }
+
+  const result = await Appointment.findByIdAndUpdate(
+    appointmentId,
+    { status: payload.status },
+    {
+      new: true,
+    },
+  );
+
+  return result;
+};
+
 export const doctorServices = {
   createService,
   updateService,
   deleteService,
   createDoctorAvailability,
   getAllAppointments,
+  updateAppointment,
 };

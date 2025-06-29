@@ -172,7 +172,7 @@ const getSingleDoctor = async (doctorId: string) => {
   // Fetch all booked timeSlots for this doctor
   const appointments = await Appointment.find({
     doctorId: doctor._id,
-    status: { $in: ['pending', 'approved'] },
+    status: { $in: ['pending', 'accepted', 'completed'] },
   }).select('timeSlot date');
 
   const bookedSlots = appointments.map((a) => a.timeSlot);

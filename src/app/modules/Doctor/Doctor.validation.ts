@@ -43,8 +43,17 @@ const createDoctorAvailabilityValidation = z.object({
   }),
 });
 
+const updateAppointmentStatus = z.object({
+  body: z.object({
+    status: z.enum(['pending', 'accepted', 'cancelled', 'completed'], {
+      required_error: 'Appointment status is required!',
+    }),
+  }),
+});
+
 export const doctorValidations = {
   createServiceValidation,
   updateServiceValidation,
   createDoctorAvailabilityValidation,
+  updateAppointmentStatus,
 };

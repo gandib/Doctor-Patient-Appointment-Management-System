@@ -35,4 +35,11 @@ router.get(
   doctorControllers.getAllAppointments,
 );
 
+router.patch(
+  '/appointments/:id/status',
+  auth('Doctor'),
+  validateRequest(doctorValidations.updateAppointmentStatus),
+  doctorControllers.updateAppointment,
+);
+
 export const doctorRoutes = router;

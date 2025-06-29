@@ -23,7 +23,7 @@ const appointmentSchema = new Schema<TAppointment>(
     status: {
       type: String,
       required: [true, 'Price is required!'],
-      enum: ['pending', 'accepted', 'cancelled'],
+      enum: ['pending', 'accepted', 'cancelled', 'completed'],
       default: 'pending',
     },
   },

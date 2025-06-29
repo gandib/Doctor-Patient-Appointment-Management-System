@@ -68,10 +68,24 @@ const getAllAppointments = catchAsync(async (req, res) => {
   });
 });
 
+const updateAppointment = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const user = req.user;
+  const result = await doctorServices.updateAppointment(req.body, id, user._id);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Appointment updated successfully',
+    data: result,
+  });
+});
+
 export const doctorControllers = {
   createService,
   updateService,
   deleteService,
   createDoctorAvailability,
   getAllAppointments,
+  updateAppointment,
 };

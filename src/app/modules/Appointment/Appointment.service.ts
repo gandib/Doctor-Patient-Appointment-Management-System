@@ -45,7 +45,7 @@ const createAppointment = async (payload: TAppointment, userId: string) => {
     doctorId: payload.doctorId,
     selectedDate: payload.selectedDate,
     timeSlot: payload.timeSlot,
-    status: { $in: ['pending', 'accepted'] },
+    status: { $in: ['pending', 'accepted', 'completed'] },
   });
 
   if (alreadyBooked) {
