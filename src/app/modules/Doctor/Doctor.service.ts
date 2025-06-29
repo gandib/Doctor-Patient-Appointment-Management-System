@@ -8,6 +8,9 @@ import QueryBuilder from '../../builder/QueryBuilder';
 import { Appointment } from '../Appointment/Appointment.model';
 import { appointmentSearchableFields } from '../Appointment/Appointment.constant';
 import { TAppointment } from '../Appointment/Appointment.interface';
+import { sendEmail } from '../../utils/sendEmail';
+import { Patient } from '../Patient/Patient.model';
+import { User } from '../User/User.model';
 
 const createService = async (payload: TService, userId: string) => {
   const doctor = await Doctor.findOne({ user: userId });
@@ -132,15 +135,20 @@ const updateAppointment = async (
   appointmentId: string,
   userId: string,
 ) => {
-  // Find DoctorId
-  const doctorId = await Doctor.findOne({ user: userId }).select('_id');
+  // Find Doctor
+  const doctor = await Doctor.findOne({ user: userId });
+
+  // find doctor as user
+  const doctorAsUser = await User.findById(doctor?.user);
 
   // Find doctorId from appointment
-  const doctorIdFromAppointment =
-    await Appointment.findById(appointmentId).select('doctorId');
+  const doctorIdFromAppointment = await Appointment.findById(appointmentId);
+
+  const patient = await Patient.findById(doctorIdFromAppointment?.patientId);
+  const patientEmail = await User.findById(patient?.user);
 
   // Compare doctorId from token to doctorIdFromAppointment. To check appointment is related to that doctor or not.
-  if (String(doctorId?._id) !== String(doctorIdFromAppointment?.doctorId)) {
+  if (String(doctor?._id) !== String(doctorIdFromAppointment?.doctorId)) {
     throw new AppError(httpStatus.UNAUTHORIZED, 'You are not authorized!');
   }
 
@@ -151,6 +159,17 @@ const updateAppointment = async (
       new: true,
     },
   );
+
+  const htmlBody = '';
+
+  if (payload.status === 'accepted') {
+    await sendEmail(
+      patientEmail?.email as string,
+      htmlBody,
+      doctorAsUser?.name as string,
+      doctorIdFromAppointment?.timeSlot as string,
+    );
+  }
 
   return result;
 };

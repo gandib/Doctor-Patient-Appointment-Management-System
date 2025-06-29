@@ -53,4 +53,7 @@ Create a .env file in the root directory of projects and add the necessary confi
     CLOUD_NAME=cloudinary_environment_name
     API_KEY=cloudinary_api_key
     API_SECRET=cloudinary_environment_api_secret
+    GMAIL_APP_EMAIL=gmail_app_email
+    GMAIL_APP_PASSWORD=gmail_app_password
+    SENDER_EMAIL=sender_gmail
    ```

@@ -13,4 +13,7 @@ export default {
   cloud_name: process.env.CLOUD_NAME,
   api_key: process.env.API_KEY,
   api_secret: process.env.API_SECRET,
+  gmail_app_email: process.env.GMAIL_APP_EMAIL,
+  gmail_app_password: process.env.GMAIL_APP_PASSWORD,
+  sender_email: process.env.SENDER_EMAIL,
 };
