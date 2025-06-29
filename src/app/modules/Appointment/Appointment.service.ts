@@ -1,14 +1,15 @@
 import httpStatus from 'http-status';
 import AppError from '../../errors/appError';
-import { Patient } from '../Patient/Patient.model';
 import { TAppointment } from './Appointment.interface';
-import { DoctorAvailability } from '../Doctor/Doctor.model';
+import { Doctor, DoctorAvailability, Service } from '../Doctor/Doctor.model';
 import { Appointment } from './Appointment.model';
+import { Patient } from '../Patient/Patient.model';
+import { Types } from 'mongoose';
 
-const createAppointment = async (payload: TAppointment, patientId: string) => {
-  const patient = await Patient.findById(patientId);
-  const doctor = await Patient.findById(payload.doctorId);
-  const service = await Patient.findById(payload.serviceId);
+const createAppointment = async (payload: TAppointment, userId: string) => {
+  const patient = await Patient.findOne({ user: userId });
+  const doctor = await Doctor.findById(payload.doctorId);
+  const service = await Service.findById(payload.serviceId);
 
   if (!patient) {
     throw new AppError(httpStatus.NOT_FOUND, 'Patient not found');
@@ -28,8 +29,8 @@ const createAppointment = async (payload: TAppointment, patientId: string) => {
   const availability = await DoctorAvailability.findOne({
     doctorId: payload.doctorId,
     serviceId: payload.serviceId,
-    dayOfWeek: dayName,
-    timeSlots: payload.timeSlot,
+    'weeklyAvailability.day': dayName,
+    'weeklyAvailability.timeSlots': payload.timeSlot,
   });
 
   if (!availability) {
@@ -53,6 +54,9 @@ const createAppointment = async (payload: TAppointment, patientId: string) => {
       'This time slot is already booked.',
     );
   }
+
+  // set patient id
+  payload.patientId = patient._id as unknown as Types.ObjectId;
 
   const result = await Appointment.create(payload);
   return result;

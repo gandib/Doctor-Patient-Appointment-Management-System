@@ -68,12 +68,14 @@ const createDoctorAvailability = async (
     throw new AppError(httpStatus.NOT_FOUND, 'Doctor is not found!');
   }
 
+  // set doctor id
   payload.doctorId = doctor?._id as unknown as Types.ObjectId;
 
   if (!service?._id) {
     throw new AppError(httpStatus.NOT_FOUND, 'Service is not found!');
   }
 
+  // generate 30 minutes interval time slots from given time range
   for (let i = 0; i < payload.weeklyAvailability.length; i++) {
     const timeRanges = payload.weeklyAvailability[i].timeSlots;
 
