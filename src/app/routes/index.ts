@@ -3,6 +3,7 @@ import { userRoutes } from '../modules/User/User.route';
 import { doctorRoutes } from '../modules/Doctor/Doctor.route';
 import { appointmentRoutes } from '../modules/Appointment/Appointment.route';
 import { patientRoutes } from '../modules/Patient/Patient.route';
+import { adminDashboardRoutes } from '../modules/AdminDashboard/AdminDashboard.route';
 
 const router = Router();
 const modulesRoutes = [
@@ -21,6 +22,10 @@ const modulesRoutes = [
   {
     path: '/appointments',
     route: appointmentRoutes,
+  },
+  {
+    path: '/admin-dashboard',
+    route: adminDashboardRoutes,
   },
 ];
 

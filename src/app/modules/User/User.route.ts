@@ -29,4 +29,10 @@ router.post(
   userControllers.loginUser,
 );
 
+router.post(
+  '/create-admin',
+  validateRequest(userValidations.createAdminValidation),
+  userControllers.createAdmin,
+);
+
 export const userRoutes = router;

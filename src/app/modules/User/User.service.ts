@@ -150,8 +150,16 @@ const loginUser = async (payload: TLoginUser) => {
   return token;
 };
 
+const createAdmin = async (payload: TUser) => {
+  payload.role = 'Admin';
+
+  const result = await User.create(payload);
+  return result;
+};
+
 export const userServices = {
   createDoctor,
   createPatient,
   loginUser,
+  createAdmin,
 };
